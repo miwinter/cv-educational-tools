@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convolution Hyperparameters — Padding Modes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+        .container {
+            display: flex;
+            align-items: flex-start;
+        }
+        .controls {
+            margin-right: 20px;
+            min-width: 220px;
+        }
+        .details {
+            max-width: 700px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Interactive Convolution Hyperparameters — Padding Modes</h2>
+    <div class="container">
+        <div class="controls" id="controls-container"></div>
+        <div id="canvas-container"></div>
+    </div>
+    <div class="details">
+        <p id="padding-details" aria-live="polite"></p>
+        <p id="output-details" aria-live="polite"></p>
+        <p>Light blue: zero padding. Red: current kernel window. Green: corresponding output cell.</p>
+        <ul>
+            <li><code>valid</code>: no padding.</li>
+            <li><code>same</code>: output size = ceil(input size / stride). With stride 1, the input and output sizes match. Extra padding goes to the bottom and right when the total is odd.</li>
+            <li><code>full</code>: kernel size − 1 padding cells on each side.</li>
+        </ul>
+        <p><a href="https://keras.io/api/layers/convolution_layers/convolution2d/">Keras Conv2D</a> supports <code>valid</code> and <code>same</code>. <code>full</code> is included here as an additional convolution mode.</p>
+    </div>
+
+    <script>
+        let inputSize = 5;
+        let kernelSize = 2;
+        let stride = 1;
+        let paddingMode = 'valid';
+        let paddingBefore = 0, paddingAfter = 0;
+        let inputMatrix, outputMatrix;
+        let kernelX = 0, kernelY = 0;
+        let outputX = 0, outputY = 0;
+        let animationFrame = 0;
+        let cellSize = 20;
+        let canvas;
+
+        function setup() {
+            let canvasContainer = select('#canvas-container');
+            canvas = createCanvas(1, 1);
+            canvas.parent(canvasContainer);
+            createControls();
+            calculateOutput();
+        }
+
+        function adjustCanvasSize() {
+            let inputWidth = inputMatrix.length * cellSize;
+            let outputWidth = Math.max(outputMatrix.length * cellSize, 60);
+            let canvasWidth = inputWidth + outputWidth + 150;
+            let canvasHeight = Math.max(inputWidth, outputWidth) + 70;
+            resizeCanvas(canvasWidth, canvasHeight);
+        }
+
+        function draw() {
+            background(255);
+            let inputOffset = 50;
+            let outputOffset = inputOffset + inputMatrix.length * cellSize + 50;
+            drawMatrix(inputOffset, 50, inputMatrix, 'Input', true, kernelX, kernelY);
+            drawMatrix(outputOffset, 50, outputMatrix, 'Output', false, outputX, outputY);
+            animateKernel();
+        }
+
+        function createControls() {
+            let controlsContainer = select('#controls-container');
+            function addControl(labelText, min, max, value, callback) {
+                let label = createP(`${labelText}: ${value}`).parent(controlsContainer);
+                let slider = createSlider(min, max, value).parent(controlsContainer);
+                slider.input(() => {
+                    let newValue = slider.value();
+                    label.html(`${labelText}: ${newValue}`);
+                    callback(newValue);
+                });
+            }
+
+            addControl('Input Size', 3, 10, inputSize, (val) => { inputSize = val; calculateOutput(); });
+            addControl('Kernel Size', 1, 5, kernelSize, (val) => { kernelSize = val; calculateOutput(); });
+            addControl('Stride', 1, 5, stride, (val) => { stride = val; calculateOutput(); });
+            createP('<label for="padding-mode">Padding</label>').parent(controlsContainer);
+            let paddingSelect = createSelect().parent(controlsContainer);
+            paddingSelect.id('padding-mode');
+            ['valid', 'same', 'full'].forEach(mode => paddingSelect.option(mode));
+            paddingSelect.selected(paddingMode);
+            paddingSelect.changed(() => {
+                paddingMode = paddingSelect.value();
+                calculateOutput();
+            });
+        }
+
+        function calculateOutput() {
+            paddingBefore = 0;
+            paddingAfter = 0;
+            if (paddingMode === 'same') {
+                let targetSize = Math.ceil(inputSize / stride);
+                let totalPadding = Math.max((targetSize - 1) * stride + kernelSize - inputSize, 0);
+                paddingBefore = Math.floor(totalPadding / 2);
+                paddingAfter = totalPadding - paddingBefore;
+            } else if (paddingMode === 'full') {
+                paddingBefore = kernelSize - 1;
+                paddingAfter = kernelSize - 1;
+            }
+            let paddedSize = inputSize + paddingBefore + paddingAfter;
+            let outputSize = Math.max(0, Math.floor((paddedSize - kernelSize) / stride) + 1);
+            inputMatrix = createMatrix(paddedSize, paddingBefore, paddingAfter);
+            outputMatrix = createMatrix(outputSize, 0);
+            kernelX = 0;
+            kernelY = 0;
+            outputX = 0;
+            outputY = 0;
+            animationFrame = 0;
+            adjustCanvasSize();
+            select('#padding-details').html(`Padding (${paddingMode}): top / left = ${paddingBefore}, bottom / right = ${paddingAfter}. Padded input: ${paddedSize} × ${paddedSize}.`);
+            select('#output-details').html(outputSize > 0
+                ? `Output: ${outputSize} × ${outputSize}. Size = floor((${inputSize} + ${paddingBefore} + ${paddingAfter} − ${kernelSize}) / ${stride}) + 1.`
+                : 'No valid output: the kernel is larger than the padded input. Reduce the kernel size or choose another padding mode.');
+        }
+
+        function createMatrix(size, before, after = before) {
+            let matrix = [];
+            for (let i = 0; i < size; i++) {
+                let row = [];
+                for (let j = 0; j < size; j++) {
+                    // This matrix stores padding markers for drawing, not convolution values.
+                    row.push((i < before || j < before || i >= size - after || j >= size - after) ? 1 : 0);
+                }
+                matrix.push(row);
+            }
+            return matrix;
+        }
+
+        function drawMatrix(x, y, matrix, label, isInput, highlightX, highlightY) {
+            fill(0);
+            textAlign(CENTER);
+            text(label, x + (matrix.length > 0 ? matrix.length * cellSize : 60) / 2, y - 10);
+            if (matrix.length === 0) {
+                text('Empty', x + 30, y + 20);
+                return;
+            }
+
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix.length; j++) {
+                    if (isInput && matrix[i][j] === 1) {
+                        fill('lightblue'); // Padding color
+                    } else {
+                        fill('white');
+                    }
+                    if (isInput && outputMatrix.length > 0 && i >= highlightY && i < highlightY + kernelSize && j >= highlightX && j < highlightX + kernelSize) {
+                        fill('red'); // Highlight kernel movement
+                    }
+                    if (!isInput && i === highlightY && j === highlightX) {
+                        fill('green'); // Highlight single output cell
+                    }
+                    stroke(0);
+                    rect(x + j * cellSize, y + i * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+
+        function animateKernel() {
+            if (outputMatrix.length === 0) return;
+            animationFrame++;
+            if (animationFrame % 30 === 0) {
+                outputX++;
+                if (outputX >= outputMatrix.length) {
+                    outputX = 0;
+                    outputY = (outputY + 1) % outputMatrix.length;
+                }
+                kernelX = outputX * stride;
+                kernelY = outputY * stride;
+            }
+        }
+    </script>
+</body>
+</html>
