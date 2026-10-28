@@ -1,0 +1,7 @@
+# Local development tools, original Keras models, tests and generated previews.
+/_dev/
+
+# Keep any future temporary exports out of the repository as well.
+/dist/
+.DS_Store
+__pycache__/

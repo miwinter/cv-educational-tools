@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6fa">
+  <meta name="description" content="Explorez un auto-encodeur MNIST : dessinez un chiffre, observez sa reconstruction et naviguez dans son espace latent 2D.">
+  <title>Latent — Explorer un auto-encodeur</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./assets/vendor/tf.min.js"></script>
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <main>
+    <h1 class="sr-only">Auto-encodeur MNIST</h1>
+    <div class="error-banner" id="error-banner" role="alert" hidden></div>
+
+    <div class="workspace" id="workspace" aria-busy="true">
+      <section class="panel reconstruction-panel" aria-labelledby="reconstruction-title">
+        <div class="panel-heading"><div><p class="section-number">01 / RECONSTRUCTION</p><h2 id="reconstruction-title">De l’entrée à la sortie</h2></div><span class="badge">28 × 28 px</span></div>
+        <div class="model-toolbar"><label for="model-select">Espace latent du modèle</label><select id="model-select" disabled><option value="2">2 dimensions</option><option value="128">128 dimensions</option></select></div>
+
+        <div class="input-toolbar">
+          <button class="button compact" id="random-button" title="Tirer une image MNIST au hasard" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 3 4 4-4 4M3 17h3c4 0 8-10 12-10h3M17 13l4 4-4 4M3 7h3c1.5 0 3 1.4 4.5 3.1M13.5 13.9c1.5 1.7 3 3.1 4.5 3.1h3"/></svg><span>Image MNIST</span></button>
+          <div class="edit-actions" role="group" aria-label="Modifier l’image d’entrée"><button class="button compact" id="noise-button" title="Ajouter un bruit gaussien d’écart-type 0,15 (pixels normalisés entre 0 et 1)" disabled>Ajouter du bruit</button><button class="button compact" id="clear-button" disabled>Effacer</button></div>
+        </div>
+
+        <div class="image-triptych">
+          <article class="image-card"><div class="image-card-heading"><h3>Entrée</h3><span class="image-step">x</span></div><div class="image-surface drawing" id="input-surface"><canvas id="input-canvas" width="28" height="28" aria-label="Image d’entrée modifiable : dessinez directement à la souris ou au doigt, sur une image MNIST ou sur une image vide."></canvas><div class="surface-placeholder" id="input-placeholder" hidden><span aria-hidden="true">↗</span>Exploration libre</div><span class="draw-hint" id="draw-hint" hidden>Dessinez ici</span></div><p class="image-caption" id="input-caption">Chargement des exemples…</p></article>
+          <article class="image-card"><div class="image-card-heading"><h3>Reconstruction</h3><span class="image-step">x̂</span></div><div class="image-surface"><canvas id="output-canvas" width="28" height="28" aria-label="Image reconstruite par le décodeur"></canvas></div><p class="image-caption" id="output-caption">Sortie du décodeur</p></article>
+          <article class="image-card"><div class="image-card-heading"><h3>Différence</h3><span class="image-step delta-step">|x − x̂|</span></div><div class="image-surface"><canvas id="error-canvas" width="28" height="28" aria-label="Carte de différence absolue entre entrée et reconstruction"></canvas><div class="surface-placeholder" id="error-placeholder" hidden><span aria-hidden="true">—</span>Sans entrée de référence</div></div><div class="error-scale"><span>0</span><span class="gradient-bar"></span><span>1</span></div></article>
+        </div>
+
+        <div class="result-strip"><div><span class="metric-label">ERREUR QUADRATIQUE MOYENNE</span><div class="metric-value"><span id="mse-value">—</span><span class="metric-unit">MSE</span></div></div><div class="metric-explanation" id="metric-explanation">Une valeur proche de 0 indique<br>une reconstruction fidèle à l’entrée.</div></div>
+
+        <details class="sample-library" id="sample-library"><summary><span><span class="library-icon" aria-hidden="true">▦</span> La collection MNIST <span class="library-count">50 images</span></span><span class="chevron" aria-hidden="true">⌄</span></summary><div id="sample-grid" class="sample-grid" role="group" aria-label="Choisir parmi les 50 exemples MNIST"></div></details>
+        <div class="drawing-note" id="drawing-note"><span aria-hidden="true">✎</span><p>Dessinez directement sur l’entrée, même après avoir chargé une image MNIST ou ajouté du bruit.</p></div>
+      </section>
+
+      <section class="panel latent-panel" id="latent-panel" aria-labelledby="latent-title">
+        <div class="panel-heading"><div><p class="section-number">02 / REPRÉSENTATION</p><h2 id="latent-title">L’espace latent</h2></div><span class="badge violet" id="latent-badge">2 dimensions</span></div>
+        <div id="latent-body" class="latent-body">
+        <div class="plot-heading"><span><span class="plot-status-dot"></span><span id="plot-mode">Position de l’entrée</span></span><button class="text-button" id="restore-button" disabled hidden>Revenir à l’entrée ↩</button></div>
+        <label class="projection-toggle" for="show-projections"><input id="show-projections" type="checkbox" checked disabled> Afficher les projections MNIST</label>
+        <div class="plot-container" id="plot-container"><canvas id="latent-canvas" tabindex="0" role="img" aria-label="Espace latent 2D : points MNIST colorés de 0 à 9. Survolez les points pour repérer les images sélectionnables ou déplacez le curseur. Les champs z1 et z2 permettent aussi de choisir une position au clavier." aria-describedby="plot-help"></canvas><div class="plot-tooltip" id="plot-tooltip" hidden></div></div>
+        <div class="plot-controls"><span id="projection-summary">2 000 exemples · 50 sélectionnables</span><div role="group" aria-label="Zoom du plan latent"><button id="zoom-out" aria-label="Dézoomer autour du curseur" title="Dézoomer autour du curseur" disabled>−</button><button id="zoom-reset" aria-label="Rétablir la vue d’ensemble" title="Vue d’ensemble" disabled>↺</button><button id="zoom-in" aria-label="Zoomer autour du curseur" title="Zoomer autour du curseur" disabled>+</button></div></div>
+        <div class="digit-legend" id="digit-legend" aria-label="Couleurs des chiffres MNIST"></div>
+        <div class="coordinates"><label for="z1"><span class="coordinate-label">z<sub>1</sub></span><input id="z1" type="number" step="0.1" value="0" disabled aria-label="Coordonnée z1"></label><span class="coordinate-divider"></span><label for="z2"><span class="coordinate-label">z<sub>2</sub></span><input id="z2" type="number" step="0.1" value="0" disabled aria-label="Coordonnée z2"></label><span class="coordinate-symbol" aria-hidden="true">↔</span></div>
+        <p class="plot-help" id="plot-help"><span aria-hidden="true">⊙</span><span id="plot-help-text">Survolez les points pour repérer les images sélectionnables. Cliquez dans le plan ou faites glisser le curseur pour explorer.</span></p>
+        </div>
+        <div class="latent-explanation" id="latent-explanation" hidden><span class="dimension-symbol" aria-hidden="true">128D</span><strong>Un espace latent à 128 dimensions</strong><p>La représentation 2D est désactivée pour ce modèle.<br>Aucune projection en deux dimensions n’est affichée.</p><small>L’entrée, la reconstruction et l’erreur restent disponibles.</small></div>
+      </section>
+    </div>
+
+    <p class="sr-only" id="announcement" role="status" aria-live="polite">Chargement du modèle…</p>
+    <noscript><p class="error-banner">Activez JavaScript pour utiliser l’auto-encodeur.</p></noscript>
+  </main>
+  <script nomodule>var banner = document.getElementById('error-banner'); banner.textContent = 'Veuillez utiliser un navigateur récent.'; banner.hidden = false;</script>
+</body>
+</html>
