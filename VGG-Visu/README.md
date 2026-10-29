@@ -34,13 +34,15 @@ Les minima, maxima et moyennes proviennent des activations avant mise en couleur
 
 ## Prétraitement exact
 
-Décodage avec orientation EXIF par `createImageBitmap(..., {imageOrientation:'from-image'})`. Recadrage carré central et redimensionnement à 224 × 224 par Canvas (équivalent géométrique à redimensionner le côté court puis recadrer). Composition alpha sur blanc. L’aperçu montre ces pixels RGB, distincts du tenseur float32. Conversion RGB → BGR puis soustraction de `[103.939, 116.779, 123.68]`, sans autre normalisation. Référence : [documentation officielle Keras VGG16](https://keras.io/api/applications/vgg/vgg_models/).
+Décodage avec orientation EXIF par `createImageBitmap(..., {imageOrientation:'from-image'})`. Deux adaptations sans déformation sont proposées : recadrage carré central puis redimensionnement à 224 × 224 (par défaut), ou image entière redimensionnée sur son côté long et centrée dans un carré blanc. Le fichier source reste en mémoire pour changer de mode sans réimporter ni recadrer une image déjà recadrée. Chaque changement recalcule les 18 sorties. Composition alpha sur blanc. L’aperçu montre ces pixels RGB, distincts du tenseur float32. Conversion RGB → BGR puis soustraction de `[103.939, 116.779, 123.68]`, sans autre normalisation. Référence : [documentation officielle Keras VGG16](https://keras.io/api/applications/vgg/vgg_models/).
+
+À l’entraînement original, les auteurs utilisent des recadrages **aléatoires** de 224 × 224 sur des images redimensionnées en conservant le ratio, avec retournements horizontaux et variations de couleur. Le côté court est fixé à 256 ou 384, ou échantillonné entre 256 et 512 selon les expériences. Notre recadrage central est déterministe et ne reproduit pas toute cette augmentation ; les marges blanches sont un choix pédagogique pour conserver le champ complet, pas la recette d’entraînement. Source : [article VGG, section 3.1](https://arxiv.org/pdf/1409.1556).
 
 ## Calcul et mémoire
 
 Un modèle à 18 sorties calcule une fois par image. Les sorties sont lues en tableaux CPU NHWC ; les tenseurs d’entrée et de sortie sont libérés dans `finally`. Le cache contient **60 311 552 octets (57,52 Mio)**. Les poids occupent **58 858 752 octets (56,13 Mio)**. Le pic est supérieur : sorties GPU et CPU simultanées, intermédiaires, allocations et caches WebGL, pixels et Canvas. `tf.memory()` ne mesure pas toute la mémoire du navigateur.
 
-Le mode « une couche » conserve uniquement la sortie choisie (12,25 Mio au maximum) et recalcule le chemin jusqu’à cette couche à sa sélection ; les changements de canal et palette ne recalculent jamais l’inférence. Les wrappers partagent les poids. La mosaïque est limitée à 32 miniatures. Les calculs sont sérialisés et versionnés : un ancien résultat ne peut pas remplacer l’image courante. Un appel WebGL synchrone peut toutefois retarder brièvement l’interface. Le contexte WebGL est libéré par le navigateur à la fermeture de la page.
+Les 18 sorties sont toujours conservées ; le choix du cache a été retiré de l’interface. Les changements de canal et palette ne recalculent jamais l’inférence. La mosaïque est limitée à 32 miniatures. Les calculs sont sérialisés et versionnés : un ancien résultat ne peut pas remplacer l’image courante. Un appel WebGL synchrone peut toutefois retarder brièvement l’interface. Le contexte WebGL est libéré par le navigateur à la fermeture de la page.
 
 ## Vérifications
 
@@ -53,6 +55,7 @@ npm run dev
 # Dans un autre terminal :
 node scripts/browser-check.mjs
 node scripts/import-check.mjs
+node scripts/framing-check.mjs
 ```
 
 Le script navigateur utilise Chrome macOS (`/Applications/Google Chrome.app/...`) et SwiftShader ; adapter `executablePath` pour une autre machine. Il compare toutes les valeurs des 18 sorties à Keras sur une entrée déterministe `RGB[i]=(i*37)%256`. Tolérance par élément : `|TFJS-Keras| ≤ 0.1 + 0.01*|Keras|`, adaptée aux accumulations WebGL ; les écarts maximaux et moyens restent consignés, sans prétendre à une égalité bit à bit. Voir `docs/numerical-results.json`, `docs/browser-results.json` et `docs/verification.md`.
@@ -64,7 +67,20 @@ npm run build
 npm run preview
 ```
 
-`dist/` contient tout, y compris TFJS et les poids. Le build utilise `base=./` ; modèles, fragments et exemple sont relatifs au sous-répertoire. Aucun routage serveur. Le modèle de workflow est fourni dans `deployment/vgg-pages.yml`. Pour activer le déploiement, le copier à la racine du dépôt Git dans `.github/workflows/vgg-pages.yml` avec un compte ou jeton autorisé à gérer les workflows. Ses chemins sont adaptés à ce dépôt regroupant plusieurs outils (`VGG-Visu/`). Configurer Pages → Source → GitHub Actions puis lancer manuellement le workflow `VGG16 — GitHub Pages`. Il attend les poids versionnés dans `public/model/` ; ne pas placer les fragments sous Git LFS sans gérer leur téléchargement au checkout. Chaque fragment est inférieur à 100 Mo. Aucune publication n’a été effectuée.
+`npm run build` produit deux copies identiques et autonomes : `dist/` (ignoré par Git, pour `npm run preview`) et **`site/` (versionné, pour GitHub Pages depuis la branche)**. Chaque copie contient le CSS, JavaScript, TensorFlow.js, les neuf images et les poids. Les chemins sont relatifs (`base=./`).
+
+Dans ce dépôt partagé, **conserver la configuration Pages existante**. L’entrée `VGG-Visu/index.html` redirige vers `./site/` ; le site devient accessible depuis `https://miwinter.github.io/cv-educational-tools/VGG-Visu/`. Aucun nouveau workflow ni réglage à la racine n’est nécessaire. Les autres outils gardent leurs chemins et fichiers. Après chaque modification, lancer `npm run build`, puis inclure `site/` dans le commit avec les sources. Les anciens fichiers compilés sont remplacés automatiquement.
+
+Le HTML source est désormais `app.html`. `vite.config.js` le sert à `/` pendant le développement ; le script de packaging produit `site/index.html` et `dist/index.html`. Servir le HTML source directement ne fonctionne pas : ses imports nécessitent Vite. L’ancien modèle de workflow autonome a été retiré afin de ne pas remplacer le site Pages commun par cette seule application.
+
+Vérification sans Vite, sous le même sous-répertoire qu’en ligne :
+
+```sh
+npm run build
+node scripts/pages-check.mjs
+```
+
+Le test utilise un serveur statique local et Chrome : redirection, CSS, JS, neuf images, modèle et calcul réel des 18 sorties. Le téléchargement initial des poids reste nécessaire. Chaque fragment est inférieur à 4 Mio ou égal à 4 Mio.
 
 Les premières visites nécessitent HTTP(S) et un réseau pour charger le site et ses poids. Aucun service worker ni mode hors ligne complet n’est promis. Une fois les ressources chargées, l’image ne quitte pas le navigateur. La CSP du serveur peut renforcer cette propriété ; le code n’envoie que des GET pour ses ressources locales.
 

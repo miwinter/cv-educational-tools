@@ -13,7 +13,7 @@ const $ = (id) => document.getElementById(id),
   base = import.meta.env.BASE_URL;
 let model,
   multi,
-  singles = [],
+  sourceBlob,
   cache = new Map(),
   pixels,
   layerIndex = 0,
@@ -134,14 +134,8 @@ function render() {
 }
 async function schedule() {
   if (running || !model || !pixels) return;
-  const requested = version,
-    selected = layerIndex,
-    mode = $("cache").value;
-  if (
-    (mode === "all" && cache.size === 18) ||
-    (mode === "layer" && cache.has(layers[selected].name))
-  )
-    return;
+  const requested = version;
+  if (cache.size === 18) return;
   running = true;
   status("Calcul des activations…");
   const start = performance.now();
@@ -151,20 +145,19 @@ async function schedule() {
     await tf.nextFrame();
     if (requested !== version) return;
     input = tf.tensor4d(preprocessRGB(pixels), [1, 224, 224, 3]);
-    const result = (mode === "all" ? multi : singles[selected]).predict(input);
+    const result = multi.predict(input);
     outputs = Array.isArray(result) ? result : [result];
     inferences++;
     const next = new Map();
     for (let i = 0; i < outputs.length; i++) {
-      const l = layers[mode === "all" ? i : selected],
+      const l = layers[i],
         shape = outputs[i].shape;
       if (shape.join(",") !== [1, l.size, l.size, l.channels].join(","))
         throw Error(`Dimensions inattendues : ${l.name}`);
       const data = await outputs[i].data();
       next.set(l.name, { layer: l, data, range: stats(data) });
     }
-    if (requested !== version || (mode === "layer" && selected !== layerIndex))
-      return;
+    if (requested !== version) return;
     cache = next;
     lastMs = performance.now() - start;
     status("Préparation de la mosaïque…");
@@ -177,23 +170,23 @@ async function schedule() {
   } catch (e) {
     if (requested === version)
       status(
-        `Calcul impossible : ${e.message}. Essayez le cache une couche ou rechargez la page.`,
+        `Calcul impossible : ${e.message}. Rechargez la page ou essayez un navigateur disposant de davantage de mémoire.`,
         true,
       );
   } finally {
     input?.dispose();
     outputs.forEach((t) => t.dispose());
     running = false;
-    if (requested !== version || (mode === "layer" && selected !== layerIndex))
-      schedule();
+    if (requested !== version) schedule();
   }
 }
 async function importImage(blob) {
+  sourceBlob = blob;
   const ticket = ++version;
   cache.clear();
   pixels = null;
   render();
-  status("Décodage et recadrage de l’image…");
+  status("Préparation de l’image…");
   let bitmap;
   try {
     bitmap = await createImageBitmap(blob, { imageOrientation: "from-image" });
@@ -203,17 +196,30 @@ async function importImage(blob) {
       side = Math.min(bitmap.width, bitmap.height);
     ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, 224, 224);
-    ctx.drawImage(
-      bitmap,
-      (bitmap.width - side) / 2,
-      (bitmap.height - side) / 2,
-      side,
-      side,
-      0,
-      0,
-      224,
-      224,
-    );
+    if ($("framing").value === "contain") {
+      const scale = 224 / Math.max(bitmap.width, bitmap.height);
+      const width = bitmap.width * scale,
+        height = bitmap.height * scale;
+      ctx.drawImage(
+        bitmap,
+        (224 - width) / 2,
+        (224 - height) / 2,
+        width,
+        height,
+      );
+    } else {
+      ctx.drawImage(
+        bitmap,
+        (bitmap.width - side) / 2,
+        (bitmap.height - side) / 2,
+        side,
+        side,
+        0,
+        0,
+        224,
+        224,
+      );
+    }
     const rgba = ctx.getImageData(0, 0, 224, 224).data;
     pixels = new Uint8Array(224 * 224 * 3);
     for (let p = 0; p < 224 * 224; p++)
@@ -268,6 +274,7 @@ for (const [path, url] of Object.entries(exampleImages)) {
   button.onclick = async () => {
     const ticket = ++version;
     pixels = null;
+    sourceBlob = null;
     cache.clear();
     render();
     status(`Chargement de l’image : ${name}…`);
@@ -324,11 +331,8 @@ $("example").onclick = async () => {
   }
 };
 for (const id of ["palette", "normalization"]) $(id).onchange = render;
-$("cache").onchange = () => {
-  version++;
-  cache.clear();
-  render();
-  schedule();
+$("framing").onchange = () => {
+  if (sourceBlob) importImage(sourceBlob);
 };
 function choose(c) {
   channel = Math.max(0, Math.min(layers[layerIndex].channels - 1, c));
@@ -375,12 +379,6 @@ render();
       inputs: model.inputs,
       outputs: layers.map((l) => model.getLayer(l.name).output),
     });
-    singles = layers.map((l) =>
-      tf.model({
-        inputs: model.inputs,
-        outputs: model.getLayer(l.name).output,
-      }),
-    );
     status("Modèle prêt. Importez une image ou chargez l’exemple.");
     schedule();
   } catch (e) {

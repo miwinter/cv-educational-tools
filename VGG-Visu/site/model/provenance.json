@@ -1,0 +1,6 @@
+{
+  "source": "Keras VGG16 ImageNet include_top=False",
+  "tensorflow": "2.15.1",
+  "bytes": 58858752,
+  "sha256": "d9a27cc1fc7f975ef8cff49180e794ccd7c4bc868ebb49740803b3bbaa8dbefd"
+}

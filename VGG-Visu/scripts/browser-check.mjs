@@ -101,13 +101,11 @@ try {
     .locator("#file")
     .setInputFiles({ name: "local.png", mimeType: "image/png", buffer: png });
   await page.waitForFunction(() => window.vggDiagnostics().running);
-  await page
-    .locator("#file")
-    .setInputFiles({
-      name: "replacement.png",
-      mimeType: "image/png",
-      buffer: png,
-    });
+  await page.locator("#file").setInputFiles({
+    name: "replacement.png",
+    mimeType: "image/png",
+    buffer: png,
+  });
   const latest = await page.evaluate(() => window.vggDiagnostics().version);
   await page.waitForFunction(
     (v) =>
@@ -117,14 +115,6 @@ try {
     latest,
     { timeout: 120000 },
   );
-  await page.selectOption("#cache", "layer");
-  await page.waitForFunction(
-    () =>
-      !window.vggDiagnostics().running &&
-      window.vggDiagnostics().cached.length === 1,
-    { timeout: 120000 },
-  );
-  const reduced = await page.evaluate(() => window.vggDiagnostics());
   await page.goto("http://127.0.0.1:4175/depot/");
   await page.waitForFunction(
     () => document.querySelector("#status").textContent.includes("Modèle prêt"),
@@ -138,7 +128,6 @@ try {
   const subdirectory = await page.evaluate(() => window.vggDiagnostics());
   const report = {
     latest,
-    reduced,
     subdirectory,
     first,
     after,

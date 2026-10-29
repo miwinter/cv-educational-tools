@@ -28,3 +28,11 @@ Premier calcul de l’exemple dans l’application : **3,92 s**. Même calcul au
 Pas de publication GitHub Pages effective, de test Firefox/Safari, de test EXIF orienté par un appareil photo, de vérification manuelle avec lecteur d’écran, de test de perte de contexte ou de stress mémoire prolongé. La composition sur blanc est implémentée mais n’a pas de fixture PNG transparente dédiée. L’absence de débordement mobile a été mesurée ; les performances mobiles restent inconnues. L’image d’exemple est une illustration originale, pas une photo ImageNet. Aucune attribution Grad-CAM.
 
 Les rapports JSON contiennent les mesures détaillées ; les captures servent uniquement à la vérification de l’interface et ne sont pas utilisées par le site.
+
+## Évolution du cadrage et du cache
+
+Le sélecteur de cache et le mode une couche ont été retirés après ces mesures historiques ; le cache des 18 sorties est conservé. `scripts/framing-check.mjs` vérifie les pixels de marge et du centre sur des rectangles portrait et paysage, le retour au recadrage depuis le fichier original et le calcul des 18 sorties à chaque changement.
+
+## Correction du service GitHub Pages
+
+La page distante servait le HTML source (`/src/main.js`) sans compilation Vite. Le build est maintenant versionné dans `site/` avec une entrée de redirection locale à cet outil. `scripts/pages-check.mjs` a vérifié le chargement sous `/cv-educational-tools/VGG-Visu/`, la redirection vers `site/`, le style calculé en grille, les neuf miniatures, les 18 couches et une inférence réelle, sans ressource manquante ni erreur JavaScript. Aucune configuration commune ou fichier des autres outils n’a été modifié.

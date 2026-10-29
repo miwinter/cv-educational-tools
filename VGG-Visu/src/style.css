@@ -37,7 +37,7 @@ p {
 }
 .input {
   display: grid;
-  grid-template-columns: 1.5fr 240px 1fr;
+  grid-template-columns: 1fr 240px;
   gap: 28px;
   align-items: center;
 }
@@ -88,11 +88,6 @@ button:disabled {
   width: 1px;
   height: 1px;
   opacity: 0;
-}
-.statusbox {
-  background: #f0f5ed;
-  padding: 18px;
-  border-radius: 12px;
 }
 #network {
   overflow: auto;
@@ -304,9 +299,6 @@ nav {
   .input {
     grid-template-columns: 1fr 224px;
   }
-  .statusbox {
-    grid-column: 1/-1;
-  }
   .explorer {
     grid-template-columns: 1fr 320px;
   }
@@ -324,9 +316,6 @@ nav {
   .input,
   .explorer {
     grid-template-columns: 1fr;
-  }
-  .statusbox {
-    grid-column: auto;
   }
   #mosaic {
     grid-template-columns: repeat(4, 1fr);
