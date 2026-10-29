@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.venv/
+.cache/
+__pycache__/
+tests/reference/*.bin
+test-results/
+
+.DS_Store
+docs/*.png

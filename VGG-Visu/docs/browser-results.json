@@ -1,0 +1,300 @@
+{
+  "latest": 7,
+  "reduced": {
+    "version": 8,
+    "inferences": 7,
+    "lastMs": 1080,
+    "cached": [
+      "block5_pool"
+    ],
+    "activationBytes": 60311552,
+    "tf": {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    "backend": "webgl",
+    "running": false
+  },
+  "subdirectory": {
+    "version": 1,
+    "inferences": 1,
+    "lastMs": 3928.3000000044703,
+    "cached": [
+      "block1_conv1",
+      "block1_conv2",
+      "block1_pool",
+      "block2_conv1",
+      "block2_conv2",
+      "block2_pool",
+      "block3_conv1",
+      "block3_conv2",
+      "block3_conv3",
+      "block3_pool",
+      "block4_conv1",
+      "block4_conv2",
+      "block4_conv3",
+      "block4_pool",
+      "block5_conv1",
+      "block5_conv2",
+      "block5_conv3",
+      "block5_pool"
+    ],
+    "activationBytes": 60311552,
+    "tf": {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    "backend": "webgl",
+    "running": false
+  },
+  "first": {
+    "version": 1,
+    "inferences": 1,
+    "lastMs": 3922.4000000059605,
+    "cached": [
+      "block1_conv1",
+      "block1_conv2",
+      "block1_pool",
+      "block2_conv1",
+      "block2_conv2",
+      "block2_pool",
+      "block3_conv1",
+      "block3_conv2",
+      "block3_conv3",
+      "block3_pool",
+      "block4_conv1",
+      "block4_conv2",
+      "block4_conv3",
+      "block4_pool",
+      "block5_conv1",
+      "block5_conv2",
+      "block5_conv3",
+      "block5_pool"
+    ],
+    "activationBytes": 60311552,
+    "tf": {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    "backend": "webgl",
+    "running": false
+  },
+  "after": {
+    "version": 1,
+    "inferences": 1,
+    "lastMs": 3922.4000000059605,
+    "cached": [
+      "block1_conv1",
+      "block1_conv2",
+      "block1_pool",
+      "block2_conv1",
+      "block2_conv2",
+      "block2_pool",
+      "block3_conv1",
+      "block3_conv2",
+      "block3_conv3",
+      "block3_pool",
+      "block4_conv1",
+      "block4_conv2",
+      "block4_conv3",
+      "block4_pool",
+      "block5_conv1",
+      "block5_conv2",
+      "block5_conv3",
+      "block5_pool"
+    ],
+    "activationBytes": 60311552,
+    "tf": {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    "backend": "webgl",
+    "running": false
+  },
+  "memory": [
+    {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    },
+    {
+      "unreliable": false,
+      "numBytesInGPU": 58875904,
+      "numBytesInGPUAllocated": 530055280,
+      "numBytesInGPUFree": 471179376,
+      "numTensors": 26,
+      "numDataBuffers": 26,
+      "numBytes": 58858752
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "url": "http://127.0.0.1:5173/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:5173/caf2276c-7d3e-46bb-b309-1a0548844559",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:5173/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:5173/51b4bde1-a4f6-4d87-9f3f-c75abec1e913",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:5173/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:5173/6f084a17-5828-4ce7-bc67-ec4fc62cc4a1",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:5173/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:5173/abdffa7f-e0e9-4531-a342-f66e70799f46",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:5173/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:5173/a6cc4fa8-2094-4368-9fbb-62d6650ee427",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/assets/index-Dzva474-.js",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/assets/index-2gyKDdmL.css",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/model.json",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-01.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-02.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-03.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-04.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-05.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-06.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-07.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-08.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-09.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-10.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-11.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-12.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-13.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-14.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/model/weights-15.bin",
+      "method": "GET"
+    },
+    {
+      "url": "http://127.0.0.1:4175/depot/example.svg",
+      "method": "GET"
+    },
+    {
+      "url": "blob:http://127.0.0.1:4175/920798fb-56dc-431c-a311-8b6bca3ff959",
+      "method": "GET"
+    }
+  ],
+  "numericalPass": true
+}

@@ -1,0 +1,242 @@
+{
+  "backend": "webgl",
+  "webglVersion": 2,
+  "preprocessingMax": 0,
+  "ms": 4459.60000000149,
+  "results": [
+    {
+      "name": "block1_conv1",
+      "shape": [
+        1,
+        224,
+        224,
+        64
+      ],
+      "maxAbs": 0.00006103515625,
+      "meanAbs": 0.000002311951466625181,
+      "relativeToPeak": 2.1060397323349861e-7,
+      "failures": 0
+    },
+    {
+      "name": "block1_conv2",
+      "shape": [
+        1,
+        224,
+        224,
+        64
+      ],
+      "maxAbs": 0.0010986328125,
+      "meanAbs": 0.00002719897297979236,
+      "relativeToPeak": 9.702383692405976e-7,
+      "failures": 0
+    },
+    {
+      "name": "block1_pool",
+      "shape": [
+        1,
+        112,
+        112,
+        64
+      ],
+      "maxAbs": 0.0010986328125,
+      "meanAbs": 0.00004743714486480434,
+      "relativeToPeak": 9.702383692405976e-7,
+      "failures": 0
+    },
+    {
+      "name": "block2_conv1",
+      "shape": [
+        1,
+        112,
+        112,
+        128
+      ],
+      "maxAbs": 0.001953125,
+      "meanAbs": 0.00009805504199606248,
+      "relativeToPeak": 8.901564717045962e-7,
+      "failures": 0
+    },
+    {
+      "name": "block2_conv2",
+      "shape": [
+        1,
+        112,
+        112,
+        128
+      ],
+      "maxAbs": 0.0078125,
+      "meanAbs": 0.00014713589061733618,
+      "relativeToPeak": 0.0000012008327474895652,
+      "failures": 0
+    },
+    {
+      "name": "block2_pool",
+      "shape": [
+        1,
+        56,
+        56,
+        128
+      ],
+      "maxAbs": 0.00732421875,
+      "meanAbs": 0.00021559992277690648,
+      "relativeToPeak": 0.0000011257807007714674,
+      "failures": 0
+    },
+    {
+      "name": "block3_conv1",
+      "shape": [
+        1,
+        56,
+        56,
+        256
+      ],
+      "maxAbs": 0.0078125,
+      "meanAbs": 0.00023742603899540418,
+      "relativeToPeak": 0.0000010947099237644008,
+      "failures": 0
+    },
+    {
+      "name": "block3_conv2",
+      "shape": [
+        1,
+        56,
+        56,
+        256
+      ],
+      "maxAbs": 0.01318359375,
+      "meanAbs": 0.00032566736827364517,
+      "relativeToPeak": 0.000001580914728972663,
+      "failures": 0
+    },
+    {
+      "name": "block3_conv3",
+      "shape": [
+        1,
+        56,
+        56,
+        256
+      ],
+      "maxAbs": 0.017578125,
+      "meanAbs": 0.00022947107520719458,
+      "relativeToPeak": 0.0000016643742992868618,
+      "failures": 0
+    },
+    {
+      "name": "block3_pool",
+      "shape": [
+        1,
+        28,
+        28,
+        256
+      ],
+      "maxAbs": 0.017578125,
+      "meanAbs": 0.00029466288492121563,
+      "relativeToPeak": 0.0000016643742992868618,
+      "failures": 0
+    },
+    {
+      "name": "block4_conv1",
+      "shape": [
+        1,
+        28,
+        28,
+        512
+      ],
+      "maxAbs": 0.00927734375,
+      "meanAbs": 0.00020766580431028363,
+      "relativeToPeak": 0.0000013213870669588555,
+      "failures": 0
+    },
+    {
+      "name": "block4_conv2",
+      "shape": [
+        1,
+        28,
+        28,
+        512
+      ],
+      "maxAbs": 0.00537109375,
+      "meanAbs": 0.00009555815668878792,
+      "relativeToPeak": 0.0000015394291181058416,
+      "failures": 0
+    },
+    {
+      "name": "block4_conv3",
+      "shape": [
+        1,
+        28,
+        28,
+        512
+      ],
+      "maxAbs": 0.0015869140625,
+      "meanAbs": 0.000013572382901044448,
+      "relativeToPeak": 8.328745582641562e-7,
+      "failures": 0
+    },
+    {
+      "name": "block4_pool",
+      "shape": [
+        1,
+        14,
+        14,
+        512
+      ],
+      "maxAbs": 0.0015869140625,
+      "meanAbs": 0.00001831057455333672,
+      "relativeToPeak": 8.328745582641562e-7,
+      "failures": 0
+    },
+    {
+      "name": "block5_conv1",
+      "shape": [
+        1,
+        14,
+        14,
+        512
+      ],
+      "maxAbs": 0.0006103515625,
+      "meanAbs": 0.000014312749230231595,
+      "relativeToPeak": 8.098553565938909e-7,
+      "failures": 0
+    },
+    {
+      "name": "block5_conv2",
+      "shape": [
+        1,
+        14,
+        14,
+        512
+      ],
+      "maxAbs": 0.0003662109375,
+      "meanAbs": 0.000005778959478318159,
+      "relativeToPeak": 0.000001663134238840629,
+      "failures": 0
+    },
+    {
+      "name": "block5_conv3",
+      "shape": [
+        1,
+        14,
+        14,
+        512
+      ],
+      "maxAbs": 0.0002288818359375,
+      "meanAbs": 4.617814571544414e-7,
+      "relativeToPeak": 0.0000015242790211039479,
+      "failures": 0
+    },
+    {
+      "name": "block5_pool",
+      "shape": [
+        1,
+        7,
+        7,
+        512
+      ],
+      "maxAbs": 0.0002288818359375,
+      "meanAbs": 6.574723092668063e-7,
+      "relativeToPeak": 0.0000015242790211039479,
+      "failures": 0
+    }
+  ]
+}

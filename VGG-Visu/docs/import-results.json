@@ -1,0 +1,52 @@
+{
+  "jpeg": {
+    "diagnostics": {
+      "version": 1,
+      "inferences": 1,
+      "lastMs": 4543.39999999851,
+      "cached": [
+        "block1_conv1",
+        "block1_conv2",
+        "block1_pool",
+        "block2_conv1",
+        "block2_conv2",
+        "block2_pool",
+        "block3_conv1",
+        "block3_conv2",
+        "block3_conv3",
+        "block3_pool",
+        "block4_conv1",
+        "block4_conv2",
+        "block4_conv3",
+        "block4_pool",
+        "block5_conv1",
+        "block5_conv2",
+        "block5_conv3",
+        "block5_pool"
+      ],
+      "activationBytes": 60311552,
+      "tf": {
+        "unreliable": false,
+        "numBytesInGPU": 58875904,
+        "numBytesInGPUAllocated": 530055280,
+        "numBytesInGPUFree": 471179376,
+        "numTensors": 26,
+        "numDataBuffers": 26,
+        "numBytes": 58858752
+      },
+      "backend": "webgl",
+      "running": false
+    },
+    "pixel": [
+      254,
+      0,
+      0,
+      255
+    ]
+  },
+  "decodeError": "Image illisible. Choisissez un fichier JPEG ou PNG valide.",
+  "responsive": {
+    "viewport": 390,
+    "documentWidth": 390
+  }
+}
