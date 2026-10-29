@@ -64,7 +64,7 @@ npm run build
 npm run preview
 ```
 
-`dist/` contient tout, y compris TFJS et les poids. Le build utilise `base=./` ; modèles, fragments et exemple sont relatifs au sous-répertoire. Aucun routage serveur. Dans ce dépôt regroupant plusieurs outils, le workflow est situé à la racine Git : `../.github/workflows/vgg-pages.yml`. Configurer Pages → Source → GitHub Actions puis lancer manuellement le workflow `VGG16 — GitHub Pages`. Il attend les poids versionnés dans `public/model/` ; ne pas placer les fragments sous Git LFS sans gérer leur téléchargement au checkout. Chaque fragment est inférieur à 100 Mo. Aucune publication n’a été effectuée.
+`dist/` contient tout, y compris TFJS et les poids. Le build utilise `base=./` ; modèles, fragments et exemple sont relatifs au sous-répertoire. Aucun routage serveur. Le modèle de workflow est fourni dans `deployment/vgg-pages.yml`. Pour activer le déploiement, le copier à la racine du dépôt Git dans `.github/workflows/vgg-pages.yml` avec un compte ou jeton autorisé à gérer les workflows. Ses chemins sont adaptés à ce dépôt regroupant plusieurs outils (`VGG-Visu/`). Configurer Pages → Source → GitHub Actions puis lancer manuellement le workflow `VGG16 — GitHub Pages`. Il attend les poids versionnés dans `public/model/` ; ne pas placer les fragments sous Git LFS sans gérer leur téléchargement au checkout. Chaque fragment est inférieur à 100 Mo. Aucune publication n’a été effectuée.
 
 Les premières visites nécessitent HTTP(S) et un réseau pour charger le site et ses poids. Aucun service worker ni mode hors ligne complet n’est promis. Une fois les ressources chargées, l’image ne quitte pas le navigateur. La CSP du serveur peut renforcer cette propriété ; le code n’envoie que des GET pour ses ressources locales.
 
